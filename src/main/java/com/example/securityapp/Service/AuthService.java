@@ -32,6 +32,8 @@ public class AuthService {
 
     private final JWTService jwtService;
 
+    private final SessionsService sessionsService;
+
 
     public void signup(UserDTO userDTO){
         UserEntity userE=dTOtoEntity(userDTO);
@@ -56,6 +58,10 @@ public class AuthService {
         String access_token=jwtService.generateToken(user);
         String refresh_token=jwtService.generaterefreshToken(user);
 
+        sessionsService.storingsession(user,refresh_token);
+
+
+
         return new LoginResponseDTO(access_token,refresh_token);
 
 
@@ -63,22 +69,25 @@ public class AuthService {
 
     }
 
-    public LoginResponseDTO refreshtoken(String token){
-        Long userid=jwtService.getId(token);
+    public LoginResponseDTO refreshtoken(String refreshtoken){
+        Long userid=jwtService.getId(refreshtoken);
+        sessionsService.validaterefreshtoken(refreshtoken);
         UserEntity user=userRepo.findById(userid).orElse(null);
 
         String new_access_token=jwtService.generateToken(user);
 
-        return new LoginResponseDTO(new_access_token,token);
+
+        return new LoginResponseDTO(new_access_token,refreshtoken);
 
 
     }
 
     public UserDTO EntitytoDTO(UserEntity userEntity){
         UserDTO userDTO = new UserDTO();
-        userDTO.setId(userEntity.getId());
+
         userDTO.setUsername(userEntity.getUsername());
         userDTO.setPassword(userEntity.getPassword());
+
         return userDTO;
     }
 
@@ -86,6 +95,7 @@ public class AuthService {
         UserEntity userEntity=new UserEntity();
         userEntity.setUsername(userDTO.getUsername());
         userEntity.setPassword(userDTO.getPassword());
+        userEntity.setRoles(userDTO.getRoles());
         return userEntity;
     }
 

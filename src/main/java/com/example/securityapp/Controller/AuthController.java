@@ -38,7 +38,8 @@ public class AuthController {
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response){
         LoginResponseDTO loginresponse=authService.login(loginDTO);
 
-        Cookie cookie = new Cookie("backuprefreshtoken", loginresponse.getRefresh_token());
+        Cookie cookie = new Cookie("refreshtoken", loginresponse.getRefresh_token());
+        cookie.setSecure(true);
 
         response.addCookie(cookie);
 
@@ -53,7 +54,7 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<LoginResponseDTO> refresh(HttpServletRequest request){
         Cookie[] cookies=request.getCookies();
-        String refreshtoken= Arrays.stream(cookies).filter(cookie -> cookie.getName().equals("backuprefreshtoken"))
+        String refreshtoken= Arrays.stream(cookies).filter(cookie -> cookie.getName().equals("refreshtoken"))
                 .findFirst()
                 .map(Cookie::getValue)
                 .orElseThrow();

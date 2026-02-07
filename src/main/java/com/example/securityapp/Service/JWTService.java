@@ -29,6 +29,7 @@ public class JWTService {
         return Jwts.builder()
                 .setSubject(user.getId().toString())
                 .claim("email",user.getUsername())
+                .claim("roles",user.getRoles())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 120))
                 .signWith(getsecretkey())
@@ -39,6 +40,7 @@ public class JWTService {
 
         return Jwts.builder()
                 .setSubject(user.getId().toString())
+
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 240))
                 .signWith(getsecretkey())

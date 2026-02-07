@@ -22,6 +22,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.example.securityapp.Entities.enums.Role.DIRECTOR;
+import static com.example.securityapp.Entities.enums.Role.MANAGER;
+
 
 @Configuration
 @EnableWebSecurity
@@ -38,16 +41,17 @@ public class webSecurityConfig {
                 .authorizeHttpRequests(authreq->authreq
 
                         .requestMatchers("/auth/**","/success.html").permitAll()
+                        .requestMatchers("/apis/employees").hasRole("DIRECTOR")
                         .anyRequest().authenticated()
 
                 )
                 .addFilterBefore(jwtAuth, UsernamePasswordAuthenticationFilter.class)
                .csrf(csrf-> csrf.disable())
 
-             //  .sessionManagement(manager->manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2Login(oauth2config->oauth2config
-                        .failureUrl("/login?error=true")
-                        .successHandler(oAuth2SuccessHandler));
+             // .sessionManagement(manager->manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .oauth2Login(oauth2config->oauth2config
+//                        .failureUrl("/login?error=true")
+//                        .successHandler(oAuth2SuccessHandler));
 //                .formLogin(Customizer.withDefaults())
 
 
